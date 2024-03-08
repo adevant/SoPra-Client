@@ -8,13 +8,25 @@ import PropTypes from "prop-types";
 import "styles/views/Game.scss";
 import { User } from "types";
 
-const Player = ({ user }: { user: User }) => (
-  <div className="player container">
-    <div className="player username">{user.username}</div>
-    <div className="player name">{user.name}</div>
-    <div className="player id">id: {user.id}</div>
-  </div>
-);
+const Player = ({ user }: { user: User }) => {
+  const navigate = useNavigate();
+
+  // Define the click handler function using navigate
+  const handleContainerClick = (userId: number) => {
+    // Navigate to the desired route when the username is clicked
+    navigate(`/profilepage/${userId}`);
+  };
+
+  return (
+    <div className="player container" onClick={() => handleContainerClick(user.id)} style={{ cursor: 'pointer' }}>
+      {/* Make the username clickable without using anchor tag */}
+      <div className="player details">
+        <div className="player label">{user.username}</div>
+        <div className="player value">id: {user.id}</div>
+      </div>
+    </div>
+  );
+};
 
 Player.propTypes = {
   user: PropTypes.object,
@@ -31,7 +43,22 @@ const Game = () => {
   // more information can be found under https://react.dev/learn/state-a-components-memory and https://react.dev/reference/react/useState 
   const [users, setUsers] = useState<User[]>(null);
 
-  const logout = (): void => {
+  const logout = async (): Promise<void> => {
+
+    const t = localStorage.getItem("token");
+    console.log("Token:", t);
+
+    async function logoutUser() {
+
+      try {
+      const response = await api.post("/users/logout", {token:t});
+
+      } catch(error) {
+        console.error("Something wrong with logout")
+      }
+    }
+
+    logoutUser();
     localStorage.removeItem("token");
     navigate("/login");
   };
@@ -44,12 +71,13 @@ const Game = () => {
     // effect callbacks are synchronous to prevent race conditions. So we put the async function inside:
     async function fetchData() {
       try {
-        const response = await api.get("/users");
+        const requestBody = null;
+        const response = await api.get("/users", requestBody);
 
         // delays continuous execution of an async operation for 1 second.
         // This is just a fake async call, so that the spinner can be displayed
         // feel free to remove it :)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        await new Promise((resolve) => setTimeout(resolve, 200));
 
         // Get the returned users and update the state.
         setUsers(response.data);
@@ -87,9 +115,11 @@ const Game = () => {
         <ul className="game user-list">
           {users.map((user: User) => (
             <li key={user.id}>
-              <Player user={user} />
+              <Player user={user}/>
             </li>
+            
           ))}
+          
         </ul>
         <Button width="100%" onClick={() => logout()}>
           Logout
@@ -100,7 +130,7 @@ const Game = () => {
 
   return (
     <BaseContainer className="game container">
-      <h2>Happy Coding!</h2>
+      <h2>Users overview</h2>
       <p className="game paragraph">
         Get all users from secure endpoint:
       </p>

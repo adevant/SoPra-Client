@@ -3,7 +3,7 @@ import { api, handleError } from "helpers/api";
 import User from "models/User";
 import {useNavigate} from "react-router-dom";
 import { Button } from "components/ui/Button";
-import "styles/views/Login.scss";
+import "styles/views/Register.scss";
 import BaseContainer from "components/ui/BaseContainer";
 import PropTypes from "prop-types";
 
@@ -13,12 +13,12 @@ however be sure not to clutter your files with an endless amount!
 As a rule of thumb, use one file per component and only add small,
 specific components that belong to the main one in the same file.
  */
-const FormField = (props) => {
+export const FormField = (props) => {
   return (
-    <div className="login field">
-      <label className="login label">{props.label}</label>
+    <div className="register field">
+      <label className="register label">{props.label}</label>
       <input
-        className="login input"
+        className="register input"
         placeholder="enter here.."
         value={props.value}
         onChange={(e) => props.onChange(e.target.value)}
@@ -33,64 +33,62 @@ FormField.propTypes = {
   onChange: PropTypes.func,
 };
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState<string>(null);
   const [password, setPassword] = useState<string>(null);
+  const status = "ONLINE";
 
-  const doLogin = async () => {
+  const doRegister = async () => {
     try {
-      const requestBody = JSON.stringify({ username, password, birthday:null, status:"ONLINE" });
-      console.log("Request Boday LOGIN:", requestBody);
-      const response = await api.post("/users/login", requestBody);
-      console.log("Response: ", response);
+      const requestBody = JSON.stringify({ username, password, status });
+      const response = await api.post("/users", requestBody);
 
       // Get the returned user and update a new object.
       const user = new User(response.data);
 
       // Store the token into the local storage.
       localStorage.setItem("token", user.token);
-      console.log("Token on Login:", user.token);
+      console.log("Token on regsiter: ", user.token);
 
-      // Login successfully worked --> navigate to the route /game in the GameRouter
+      // Register successfully worked --> navigate to the route /game in the GameRouter
       navigate("/game");
     } catch (error) {
       alert(
-        `Something went wrong during the login: \n${handleError(error)}`
+        `Something went wrong during the register: \n${handleError(error)}`
       );
     }
   };
 
   return (
     <BaseContainer>
-      <div className="login container">
-        <div className="login form">
-        <h2>Login Page</h2>
+      <div className="register container">
+        <div className="register form">
+        <h2>Register Page</h2>
           <FormField
-            label="Username"
+            label="new Username"
             value={username}
             onChange={(un: string) => setUsername(un)}
           />
           <FormField
-            label="Password"
+            label="new Password"
             value={password}
             onChange={(un: string) => setPassword(un)}
           />
-          <div className="login button-container">
-            <span style={{ margin: "1110px 0" }}></span>
+          <div className="register button-container">
             <Button
               disabled={!username || !password}
               width="100%"
-              onClick={() => doLogin()}
+              onClick={() => doRegister()}
             >
-              Login
+              Register
             </Button>
-            <span style={{ margin: "0 100px" }}></span>
+            <span style={{ margin: "0 10px" }}></span>
             <Button
               width="100%"
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/login")}
             >
-              Go To Register
+              Go To Login
             </Button>
           </div>
         </div>
@@ -102,4 +100,4 @@ const Login = () => {
 /**
  * You can get access to the history object's properties via the useLocation, useNavigate, useParams, ... hooks.
  */
-export default Login;
+export default Register;
