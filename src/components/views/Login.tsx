@@ -77,7 +77,7 @@ const Login = () => {
             onChange={(un: string) => setPassword(un)}
           />
           <div className="login button-container">
-            <span style={{ margin: "1110px 0" }}></span>
+            <span style={{ margin: "10px 0" }}></span>
             <Button
               disabled={!username || !password}
               width="100%"
@@ -85,7 +85,7 @@ const Login = () => {
             >
               Login
             </Button>
-            <span style={{ margin: "0 100px" }}></span>
+            <span style={{ margin: "0 10px" }}></span>
             <Button
               width="100%"
               onClick={() => navigate("/register")}
