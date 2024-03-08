@@ -5,6 +5,13 @@ import GameRouter from "./GameRouter";
 import {LoginGuard} from "../routeProtectors/LoginGuard";
 import Login from "../../views/Login";
 
+import {RegisterGuard} from "../routeProtectors/RegisterGuard";
+import Register from "../../views/Register";
+
+import { ProfilePageGuard } from "../routeProtectors/ProfilePageGuard";
+import ProfilePageRouter from "./ProfilePageRouter";
+
+
 /**
  * Main router of your application.
  * In the following class, different routes are rendered. In our case, there is a Login Route with matches the path "/login"
@@ -15,6 +22,7 @@ import Login from "../../views/Login";
  * Documentation about routing in React: https://reactrouter.com/en/main/start/tutorial 
  */
 const AppRouter = () => {
+  
   return (
     <BrowserRouter>
       <Routes>
@@ -23,13 +31,20 @@ const AppRouter = () => {
           <Route path="/game/*" element={<GameRouter base="/game"/>} />
         </Route>
 
+        <Route path="/profilepage/*" element={<ProfilePageGuard />}>
+          <Route path="/profilepage/*" element={<ProfilePageRouter base="/profilepage"/>} />
+        </Route>
+
         <Route path="/login" element={<LoginGuard />}>
           <Route path="/login" element={<Login/>} />
         </Route>
 
-        <Route path="/" element={
-          <Navigate to="/game" replace />
-        }/>
+        <Route path="/register" element={<RegisterGuard />}>
+          <Route path="/register" element={<Register base="/login"/>} />
+        </Route>
+
+         <Route path="/" element={
+        <Navigate to="/game" replace />}/>
 
       </Routes>
     </BrowserRouter>
@@ -40,3 +55,8 @@ const AppRouter = () => {
 * Don't forget to export your component!
  */
 export default AppRouter;
+
+// <Route path="/" element={
+//  <Navigate to="/game" replace />}/>
+
+//{console.log("approuter success")}
